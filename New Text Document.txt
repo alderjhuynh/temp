@@ -1,0 +1,76 @@
+I'm attempting to design a vampirism plugin for paper 1.21.11. If your knowledge cutoff doesn't account for this version of Minecraft, you can simply try code for any 1.21.x version. 
+
+There are a couple major things: 
+
+Sunlight
+Hunger/Feeding
+Abilities
+Leveling & Level Abilities
+Leader
+Commands
+Becoming a vampire/lineage
+Humans
+
+The first thing, sunlight, should be pretty simple. I'd like there to be a per-player bossbar that slowly fills up when a `can_see_sky` predicate is fulfilled, and slowly drains when this predicate is not met. Additionally, I'd like the bar's filling and draining to be at least somewhat based on the time of day. For instance, sunlight at noon should have more of an effect than sunlight right at dawn or dusk. As your "temperature bar" rises, you are affected with many negative effects, like blindness and nausea at 50%, mining fatigue and weakness at 75%, and finally, are set completely on fire at 100%. This bar should be red, and have the title "Temperature". Nothing else is needed for this display, like the exact number for temperature. 
+
+Secondly, the hunger system. Rather than Minecraft's own hunger and healing systems, I'd like to completely hijack/rewrite it for vampire specific. Rather than healing from hunger naturally (which should be turned off for vampires), vampires instead directly translate hunger to health. Meaning, for every x interval while the vampire's hunger is more than 0 and their health is less than their max health, they drain a hunger point to heal a health point. While this is much faster, it's also extremely inefficient food-wise, so I think it fits the aesthetic I'm going for. 
+
+Next, feeding. Vampires cannot eat food. Plain and simple as that. Even things like golden apples shouldn't be allowed. However, they have ways to remediate this. There are three main ways a vampire can regain hunger. First is by attacking an entity that "has blood", (which would be determined by a list containing most passive mobs, as well as non-undead hostile mobs and players, and restore an amount of hunger based on damage dealt.) second is by bottling blood. By interacting with an entity that has blood while holding any amount of empty glass bottle, you will bottle some of their blood for future consumption. There are three types of blood bottles: animal, human, and vampire blood bottles. Animal blood is minimally restorative. Think bread. Human blood is much better, acting like steak, and additionally healing you a small amount. Vampire blood restores nearly nothing, as it's not meant to be drunken by vampires. The third and final way, which is a nice segue into abilities, is "draining".
+
+Draining is one of the many abilities you gain as a vampire. By sneaking and interacting with an entity, you will deal small amounts of damage to it, which will also restore your hunger. The other abilities you gain as a vampire are usually locked behind leveling, aside from some basic identifying abilities. At level 0, a vampire first unlocks passive speed and strength 1, as well as their sunlight vulnerability and draining ability. At level 20, all undead hostile mobs become neutral to the vampire. At level 40, you get bloodlust, which buffs your passive speed and strength to 2 and 3 respectively as well as increasing passive hunger steal, at the cost of MASSIVELY draining hunger. At level 60, vampires unlock bat form, which allows them to fly at the cost of draining hunger, as well as being able to be one tapped by any source of damage (they also cannot use items or break blocks in this form).
+
+There are also "Level Abilities", which allow you to further define your playstyle at certain levels with 3 different archetypes (Bloodfiend [offensive, blood abilities], Trickster [being annoying], Master [defensive]). These come in a set of three, with you being able to only choose one at each level. You can reset your choices once you hit level 100+ at the cost of a major amount of your levels. 
+
+At level 20, you gain the following blood options:
+
+1. Name - Your hunger steal is slightly buffed.(Bloodfiend)
+2. Name - Bottled blood fills you up more. (Trickster)
+3. Name - Human blood heals you additionally. (Master)
+
+At level 40, you gain the following defensive options:
+
+1. Name - While in Bloodlust, you take less damage. (Bloodfiend)
+2. Name - You take less damage from Wooden Stakes. (Trickster)
+3. Name - You take less damage while you have more than 50% health remaining (Master)
+
+At level 60, you gain the following lifesteal options:
+
+1. Name - While in Bloodlust, you gain additional Lifesteal (Bloodfiend)
+2. Name - While it is nighttime, you gain additional Lifesteal (Trickster)
+3. Name - ??? (Master)
+
+At level 80, you gain the following offensive options:
+
+1. Name - ??? (Bloodfiend)
+2. Name - ??? (Trickster)
+3. Name - ??? (Master)
+
+At level 100, you gain the following ultimate options:
+
+1. Name - Bloodlust and Bat Form no longer take blood (hunger). (Bloodfiend)
+2. Last Stand - You ignore death, and instead, are empowered for the next 30 seconds. If you successfully kill a player within 30 seconds, you live. Otherwise you die, and this ability goes on cooldown for 10 minutes. 
+3. Evil Presence - While you have hunger, damage you take is ignored, and twice the amount of damage that was dealt to you is taken from your hunger. Overflow hunger damage is dealt to you. 
+
+Leveling is pretty simple. Every day a vampire lives is another level (calculated via percentage of day, not simply give one level after every day), and you additionally gain a percentage of a level by using your draining ability. 
+
+The first vampire to reach level 100 is the leader, called the vampire Elder. After this point the highest leveled vampire over 100 is the Elder. They do not take sun damage, but still suffer from its other effects. 
+
+The displays are as follows. 
+
+The following commands are needed. All /vampire commands are specific to vampires and cannot be run by any other race. The same for /human. 
+
+/vampire (alias /v): displays info like level, percent to next level, lineage, etc. 
+/vampire list [number] (alias /v l [number]) list all vampires and their levels and ranks, displaying 10 or so before number is required to go to different pages, additionally displays who the elder is and you at all times. 
+/vampire bloodbottle (alias /v bb): if you're holding a bottle, damages you and fills it with vampire blood. 
+/vampire bloodlust (alias /v bl): activates bloodlust provided you have enough hunger and are leveled enough.
+/vampire transform (alias /v t): activates bat form provided you have enough hunger and are leveled enough. 
+/vampire intent (alias /v i): changes the chance to infect a human when attacking them from 5% to 1.5% and vice versa
+
+/human bloodbottle (alias /h bb): if you're holding a bottle, damages you and fills it with human blood. 
+/human list [number] (alias /h l [number]): same as vampire, but for humans. 
+
+/race [vampire/human] [name]: admin command to change a player's race to vampire or human
+
+Infection is done in 2 (or technically 3) ways. After being infected as a human, you go through a day long process before becoming a level 0 vampire. You can be infected by drinking vampire blood, the 5/1.5% chance from being attacked by a vampire, or a 100% chance from being killed by a vampire. Lineage is just a fun way to track who turned you into a vampire, so that'll need to be tracked, as well as vampire blood owners I suppose. (for the bottles)
+
+Humans are a race with no special abilities. It's the default race. However, they have the ability to forge and craft special weapons. They can craft wooden stakes (wooden swords that deal 2x damage to vampires) and purified armor (armor that wards against infection). This doesn't need to be worried about at this time. 
